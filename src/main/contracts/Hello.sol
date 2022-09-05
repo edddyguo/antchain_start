@@ -1,4 +1,4 @@
-pragma solidity <=0.6.4;
+pragma solidity 0.6.4;
 
 contract Hello {
 
@@ -9,8 +9,7 @@ contract Hello {
         name = 'Hello world!';
     }
 
-    function hello() view public returns (identity, string memory) {
-        return (msg.sender, name);
+    function hello() public view returns (identity) {
+        return (msg.sender);
     }
-
 }
