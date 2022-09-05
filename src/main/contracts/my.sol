@@ -300,25 +300,4 @@ contract testTransfer{
             return success;
          }
 
-
-//          function transferScoreUpdate(identity scoreaddress,identity from,identity to ,uint256 value) public returns(bool){
-//             (bool success,)=scoreaddress.call(abi.encodeWithSignature("testFooTransfer1(identity,identity,uint256)", "call testFooTransfer1", from, to,value));
-//             return success;
-//       }
-
-// //balance of
-//          function testBalanceof(identity scoreaddress,identity from) public returns(bool){
-//             (bool success,)=scoreaddress.call(abi.encodeWithSignature("balanceOf(identity)", "call balanceOf", from));
-//             return success;
-//       }
-
-//  // newtransfer
-
-//          function testNewtransfer(identity scoreaddress,identity from,identity to) public returns(bool){
-//             (bool success,)=scoreaddress.call(abi.encodeWithSignature("_transfer(identity,identity,uint256)", "call _transfer", from,to,10000));
-//             return success;
-//       }
-
-    //=============================tools=============================
-
 }
