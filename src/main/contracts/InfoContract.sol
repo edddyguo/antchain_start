@@ -1,4 +1,4 @@
-pragma solidity ^0.6.4;
+pragma solidity ^0.4.23;
 
 contract InfoContract {
     string name;
@@ -15,4 +15,5 @@ contract InfoContract {
     function getInfo() public view returns(string memory, uint) {
         return (name, age);
     }
+
 }

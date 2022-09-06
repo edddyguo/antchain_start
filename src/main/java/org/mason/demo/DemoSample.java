@@ -19,13 +19,10 @@ import com.alipay.mychain.sdk.domain.account.AccountStatus;
 import com.alipay.mychain.sdk.domain.account.AuthMap;
 import com.alipay.mychain.sdk.domain.account.Identity;
 
-import java.io.File;
 import java.io.IOException;
 import java.math.BigInteger;
 import java.net.InetSocketAddress;
-import java.net.URLPermission;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 import com.alipay.mychain.sdk.api.MychainClient;
@@ -46,24 +43,17 @@ import com.alipay.mychain.sdk.message.transaction.AbstractTransactionRequest;
 import com.alipay.mychain.sdk.message.transaction.TransactionReceiptResponse;
 import com.alipay.mychain.sdk.message.transaction.account.CreateAccountRequest;
 import com.alipay.mychain.sdk.message.transaction.account.CreateAccountResponse;
-import com.alipay.mychain.sdk.message.transaction.account.TransferBalanceRequest;
-import com.alipay.mychain.sdk.message.transaction.account.TransferBalanceResponse;
 import com.alipay.mychain.sdk.message.transaction.confidential.ConfidentialRequest;
 import com.alipay.mychain.sdk.message.transaction.contract.CallContractRequest;
 import com.alipay.mychain.sdk.message.transaction.contract.DeployContractRequest;
 import com.alipay.mychain.sdk.message.transaction.contract.UpdateContractRequest;
 import com.alipay.mychain.sdk.message.transaction.contract.UpdateContractResponse;
-import com.alipay.mychain.sdk.network.MsgTimeoutTask;
 import com.alipay.mychain.sdk.type.BaseFixedSizeUnsignedInteger;
 import com.alipay.mychain.sdk.utils.ByteUtils;
 import com.alipay.mychain.sdk.utils.IOUtil;
 import com.alipay.mychain.sdk.utils.RandomUtil;
 import com.alipay.mychain.sdk.vm.EVMOutput;
 import com.alipay.mychain.sdk.vm.EVMParameter;
-import com.sun.jdi.Method;
-import com.sun.source.doctree.SystemPropertyTree;
-import com.sun.tools.javac.Main;
-import org.apache.commons.io.FileUtils;
 import org.mason.demo.Helper;
 
 public class DemoSample {
@@ -122,12 +112,19 @@ public class DemoSample {
                     "60405160405180910390a460009050929150505600a165627a7a72305820371af9e83b0e49ca71634c470c75e504d08db9abbaf39"
                     + "92f30434f8d7a7994d40029";
 
-    private static final String contractCodeString1="60806040523480156100115760006000fd5b50610017565b61042c806100266000396000f3fe60806040523480156100115760006000fd5b506004361061003b5760003560e01c80635a9b0b89146100415780638262963b146100cc5761003b565b60006000fd5b610049610199565b6040518080602001838152602001828103825284818151815260200191508051906020019080838360005b838110156100905780820151818401525b602081019050610074565b50505050905090810190601f1680156100bd5780820380516001836020036101000a031916815260200191505b50935050505060405180910390f35b610197600480360360408110156100e35760006000fd5b81019080803590602001906401000000008111156101015760006000fd5b8201836020820111156101145760006000fd5b803590602001918460018302840111640100000000831117156101375760006000fd5b91908080601f016020809104026020016040519081016040528093929190818152602001838380828437600081840152601f19601f8201169050808301925050505050505090909192909091929080359060200190929190505050610251565b005b606060006000600050600160005054818054600181600116156101000203166002900480601f01602080910402602001604051908101604052809291908181526020018280546001816001161561010002031660029004801561023d5780601f106102125761010080835404028352916020019161023d565b820191906000526020600020905b81548152906001019060200180831161022057829003601f168201915b505050505091509150915061024d565b9091565b816000600050908051906020019061026a929190610346565b508060016000508190909055507f010becc10ca1475887c4ec429def1ccc2e9ea1713fe8b0d4e9a1d009042f6b8e600060005060016000505460405180806020018381526020018281038252848181546001816001161561010002031660029004815260200191508054600181600116156101000203166002900480156103325780601f1061030757610100808354040283529160200191610332565b820191906000526020600020905b81548152906001019060200180831161031557829003601f168201915b5050935050505060405180910390a15b5050565b828054600181600116156101000203166002900490600052602060002090601f016020900481019282601f1061038757805160ff19168380011785556103ba565b828001600101855582156103ba579182015b828111156103b95782518260005090905591602001919060010190610399565b5b5090506103c791906103cb565b5090565b6103f391906103d5565b808211156103ef57600081815060009055506001016103d5565b5090565b9056fea2646970667358221220638f0857377c0c99a6c30550fec4194619a8fd6a74072e68634128f937e2334a64736f6c63430006040033";
-
     private static byte[] contractCode = ByteUtils.hexStringToBytes(contractCodeString);
+
+    private static final String contractCodeString1="0x608060405234801561001057600080fd5b50610400806100206000396000f300608060405260043610610057576000357c0100000000000000000000000000000000000000000000000000000000900463ffffffff1680635a9b0b891461005c5780638262963b146100f3578063d5dcf12714610166575b600080fd5b34801561006857600080fd5b50610071610193565b6040518080602001838152602001828103825284818151815260200191508051906020019080838360005b838110156100b757808201518184015260208101905061009c565b50505050905090810190601f1680156100e45780820380516001836020036101000a031916815260200191505b50935050505060405180910390f35b3480156100ff57600080fd5b50610164600480360381019080803590602001908201803590602001908080601f01602080910402602001604051908101604052809392919081815260200183838082843782019150505050505091929192908035906020019092919050505061023f565b005b34801561017257600080fd5b5061019160048036038101908080359060200190929190505050610325565b005b6060600080600154818054600181600116156101000203166002900480601f0160208091040260200160405190810160405280929190818152602001828054600181600116156101000203166002900480156102305780601f1061020557610100808354040283529160200191610230565b820191906000526020600020905b81548152906001019060200180831161021357829003601f168201915b50505050509150915091509091565b816000908051906020019061025592919061032f565b50806001819055507f010becc10ca1475887c4ec429def1ccc2e9ea1713fe8b0d4e9a1d009042f6b8e600060015460405180806020018381526020018281038252848181546001816001161561010002031660029004815260200191508054600181600116156101000203166002900480156103125780601f106102e757610100808354040283529160200191610312565b820191906000526020600020905b8154815290600101906020018083116102f557829003601f168201915b5050935050505060405180910390a15050565b8060018190555050565b828054600181600116156101000203166002900490600052602060002090601f016020900481019282601f1061037057805160ff191683800117855561039e565b8280016001018555821561039e579182015b8281111561039d578251825591602001919060010190610382565b5b5090506103ab91906103af565b5090565b6103d191905b808211156103cd5760008160009055506001016103b5565b5090565b905600a165627a7a723058201cceaa0bfe1387d67b75238a941644d49898607704b3d6fded2cd2ae566488bf0029";
+
     //helloV1
     private static byte[] contractCode1 = ByteUtils.hexStringToBytes(contractCodeString1);
 
+    //v2
+    private static final String contractCodeStringV2="0x608060405234801561001057600080fd5b5061065a806100206000396000f300608060405260043610610062576000357c0100000000000000000000000000000000000000000000000000000000900463ffffffff1680635a9b0b89146100675780638262963b146100fe57806385b31d7b14610171578063b1899c4114610208575b600080fd5b34801561007357600080fd5b5061007c61029f565b6040518080602001838152602001828103825284818151815260200191508051906020019080838360005b838110156100c25780820151818401526020810190506100a7565b50505050905090810190601f1680156100ef5780820380516001836020036101000a031916815260200191505b50935050505060405180910390f35b34801561010a57600080fd5b5061016f600480360381019080803590602001908201803590602001908080601f01602080910402602001604051908101604052809392919081815260200183838082843782019150505050505091929192908035906020019092919050505061034b565b005b34801561017d57600080fd5b50610186610431565b6040518080602001838152602001828103825284818151815260200191508051906020019080838360005b838110156101cc5780820151818401526020810190506101b1565b50505050905090810190601f1680156101f95780820380516001836020036101000a031916815260200191505b50935050505060405180910390f35b34801561021457600080fd5b5061021d6104dd565b6040518080602001838152602001828103825284818151815260200191508051906020019080838360005b83811015610263578082015181840152602081019050610248565b50505050905090810190601f1680156102905780820380516001836020036101000a031916815260200191505b50935050505060405180910390f35b6060600080600154818054600181600116156101000203166002900480601f01602080910402602001604051908101604052809291908181526020018280546001816001161561010002031660029004801561033c5780601f106103115761010080835404028352916020019161033c565b820191906000526020600020905b81548152906001019060200180831161031f57829003601f168201915b50505050509150915091509091565b8160009080519060200190610361929190610589565b50806001819055507f010becc10ca1475887c4ec429def1ccc2e9ea1713fe8b0d4e9a1d009042f6b8e6000600154604051808060200183815260200182810382528481815460018160011615610100020316600290048152602001915080546001816001161561010002031660029004801561041e5780601f106103f35761010080835404028352916020019161041e565b820191906000526020600020905b81548152906001019060200180831161040157829003601f168201915b5050935050505060405180910390a15050565b6060600080600154818054600181600116156101000203166002900480601f0160208091040260200160405190810160405280929190818152602001828054600181600116156101000203166002900480156104ce5780601f106104a3576101008083540402835291602001916104ce565b820191906000526020600020905b8154815290600101906020018083116104b157829003601f168201915b50505050509150915091509091565b6060600080600154818054600181600116156101000203166002900480601f01602080910402602001604051908101604052809291908181526020018280546001816001161561010002031660029004801561057a5780601f1061054f5761010080835404028352916020019161057a565b820191906000526020600020905b81548152906001019060200180831161055d57829003601f168201915b50505050509150915091509091565b828054600181600116156101000203166002900490600052602060002090601f016020900481019282601f106105ca57805160ff19168380011785556105f8565b828001600101855582156105f8579182015b828111156105f75782518255916020019190600101906105dc565b5b5090506106059190610609565b5090565b61062b91905b8082111561062757600081600090555060010161060f565b5090565b905600a165627a7a7230582062c1c1804b2189cc96733b4ee99dd89d2b2961b020c6b2895e9eb5027bb3483f0029";
+
+
+    //helloV1
+    private static byte[] contractCodeV2 = ByteUtils.hexStringToBytes(contractCodeStringV2);
 
     /**
      * contract id
@@ -268,51 +265,24 @@ public class DemoSample {
         sdk.getConfidentialService().signRequest(env.getSignerOption().getSigners(), request);
     }
 
-    private static void deployContract(byte[] contractCode) {
+    public static Identity deployContract(byte[] contractCode) {
         EVMParameter contractParameters = new EVMParameter();
-//        contractParameters.addIdentity(testAccount1);
-//        contractParameters.addUint(BigInteger.valueOf(50));
-        contractParameters.addString("gushui030303");
-        contractParameters.addUint(BigInteger.valueOf(50));
-
-        // 打印 testContractId
-        System.out.println("testContractId: ++++++++++++++++++" + testContractId);
-        System.out.println("testContractId: ++++++++++++++++++" + Utils.getIdentityByName(testContractId));
-        // build DeployContractRequest
+        Identity identityByName = Utils.getIdentityByName(testContractId);
         DeployContractRequest request = new DeployContractRequest(userIdentity,
-                Utils.getIdentityByName(testContractId), contractCode, VMTypeEnum.EVM,
+                identityByName, contractCode, VMTypeEnum.EVM,
                 contractParameters, BigInteger.ZERO);
-
-        Identity contractAddress = Utils.getIdentityByName(testContractId);
-
         TransactionReceiptResponse deployContractResult;
-        if (isTeeChain) {
-            signRequest(request);
-
-            // generate transaction key
-            byte[] transactionKey = ConfidentialUtil.keyGenerate(secretKey,
-                    request.getTransaction().getHash().getValue());
-
-            ConfidentialRequest confidentialRequest = new ConfidentialRequest(request, publicKeys, transactionKey);
-
-            deployContractResult = sdk.getConfidentialService().confidentialRequest(confidentialRequest);
-        } else {
-            deployContractResult = sdk.getContractService().deployContract(request);
-        }
-
-        // deploy contract
+        deployContractResult = sdk.getContractService().deployContract(request);
         if (!deployContractResult.isSuccess()
                 || deployContractResult.getTransactionReceipt().getResult() != 0) {
             exit("deployContract",
                     getErrorMsg((int) deployContractResult.getTransactionReceipt().getResult()));
         } else {
             System.out.println("deploy contract success.");
-            //打印结果
             System.out.println("deploy contract result: " + deployContractResult);
+            return identityByName;
         }
-
-        //调用合约hello方法
-        hello(contractAddress);
+        return null;
     }
 
     private static void issue() {
@@ -374,38 +344,77 @@ public class DemoSample {
         }
     }
 
-    private static void hello(Identity contractAddress) {
-        EVMParameter parameters = new EVMParameter("getInfo()");
-
-        //string to identity,
-//        Identity identityByName = Utils.getIdentityByName("0x6105174ae4e6bcc0b25429792547d57bb3bb6ff48360d1f5b3ffd14ee8873f99");
-//        Identity identity = new Identity("0x54e0241ccf8c1d18dfd063087af153654cf93c813d308f5a8b44385d18d0df87");
-
-//        Identity identity = Utils.getIdentityByName(contractAddress.toString());
-
-        //4a16b4c42572feca2a57ba28739a858e4cb7b5f6c6b2fb4fa4fc755f9eea005e
-//        Identity identity = new Identity("4a16b4c42572feca2a57ba28739a858e4cb7b5f6c6b2fb4fa4fc755f9eea005e");
-//        Identity identity = new Identity(contractAddress);
-
+    private static void setInfo(Identity contractAddress) {
+        //打印合约地址
+        System.out.println("contract address: " + contractAddress);
+        EVMParameter parameters = new EVMParameter("setAge(uint)");
+//        parameters.addString("gushui030303");
+        parameters.addUint(BigInteger.valueOf(100));
         // build CallContractRequest
-        CallContractRequest request = new CallContractRequest(userIdentity,
-                contractAddress, parameters, BigInteger.ZERO, VMTypeEnum.EVM);
-
+        CallContractRequest request = new CallContractRequest(userIdentity, contractAddress, parameters, BigInteger.ZERO, VMTypeEnum.EVM);
         TransactionReceiptResponse callContractResult;
         callContractResult = sdk.getContractService().callContract(request);
-
         //打印结果
         System.out.println("callContractResult: " + callContractResult.getTransactionReceipt());
 
         if (!callContractResult.isSuccess() || callContractResult.getTransactionReceipt().getResult() != 0) {
-            exit("hello1", getErrorMsg((int) callContractResult.getTransactionReceipt().getResult()));
+            exit("info fail", getErrorMsg((int) callContractResult.getTransactionReceipt().getResult()));
         } else {
-            System.out.println("hello2 success.");
-            //打印 callContractResult
-            System.out.println(callContractResult.getTransactionReceipt());
-
+            System.out.println("info success.");
+            TransactionReceipt transactionReceipt = callContractResult.getTransactionReceipt();
+            System.out.println("info result: " + transactionReceipt);
+            EVMOutput evmOutput = new EVMOutput(ByteUtils.toHexString(transactionReceipt.getOutput()));
+            //按顺序获得返回值
+            String name = evmOutput.getString();//get string
+            BigInteger bigInteger = evmOutput.getUint(); // 100
+            //打印结果
+            System.out.println("string: " + name);
+            System.out.println("bigInteger: " + bigInteger);
         }
-        System.out.println("hello3 success.++++++++++++");
+    }
+
+    private static void info(Identity contractAddress) {
+        EVMParameter parameters = new EVMParameter("getInfo()");
+        // build CallContractRequest
+        CallContractRequest request = new CallContractRequest(userIdentity,
+                contractAddress, parameters, BigInteger.ZERO, VMTypeEnum.EVM);
+        TransactionReceiptResponse callContractResult;
+        callContractResult = sdk.getContractService().callContract(request);
+        //打印结果
+        System.out.println("callContractResult: " + callContractResult.getTransactionReceipt());
+
+        if (!callContractResult.isSuccess() || callContractResult.getTransactionReceipt().getResult() != 0) {
+            exit("info fail", getErrorMsg((int) callContractResult.getTransactionReceipt().getResult()));
+        } else {
+            System.out.println("info success.");
+            TransactionReceipt transactionReceipt = callContractResult.getTransactionReceipt();
+            System.out.println("info result: " + transactionReceipt);
+            EVMOutput evmOutput = new EVMOutput(ByteUtils.toHexString(transactionReceipt.getOutput()));
+            //按顺序获得返回值
+            String name = evmOutput.getString();//get string
+            BigInteger bigInteger = evmOutput.getUint(); // 100
+            //打印结果
+            System.out.println("string: " + name);
+            System.out.println("bigInteger: " + bigInteger);
+        }
+    }
+
+    //InfoContract01
+    private static void myinfo(Identity contractAddress) {
+        EVMParameter parameters = new EVMParameter("testinfo()");
+        CallContractRequest request = new CallContractRequest(userIdentity,
+                contractAddress, parameters, BigInteger.ZERO, VMTypeEnum.EVM);
+        TransactionReceiptResponse callContractResult;
+        callContractResult = sdk.getContractService().callContract(request);
+        if (!callContractResult.isSuccess() || callContractResult.getTransactionReceipt().getResult() != 0) {
+            exit("info fail", getErrorMsg((int) callContractResult.getTransactionReceipt().getResult()));
+        } else {
+            System.out.println("info success.");
+            TransactionReceipt transactionReceipt = callContractResult.getTransactionReceipt();
+            EVMOutput evmOutput = new EVMOutput(ByteUtils.toHexString(transactionReceipt.getOutput()));
+            String name = evmOutput.getString();//get string
+            System.out.println("string: " + name);
+        }
     }
 
     private static void transfer() {
@@ -699,26 +708,50 @@ public class DemoSample {
 
 
         //testContract
-//        testContract();
+        testContract();
 //
 //
 //        getIdentityName();
 
-        hello(Utils.getIdentityByName("CreditManager1662379887264"));
+//        hello(Utils.getIdentityByName("CreditManager1662379887264"));
 
         sdk.shutDown();
     }
 
-     public static void testContract() {
-            deployContract(contractCode1);
+    private static void deployContractAndCall() {
+
+
+    }
+
+    public static void testContract() {
+        //部署合约 并且调用合约 返回合约名称
+//        Identity identity = deployContract(contractCode1);
+////        //打印合约地址 11652956c69fcc29e3922363073d5daa24eeec4613c1452b607589da95cd8892
+//        System.out.println("合约地址:"+identity.toString());
+////        //打印testContractId
+//        System.out.println("testContractId:"+testContractId);
+
+        Identity identity = Utils.getIdentityByName("CreditManager1662461289480");
+
+//        合约地址:3d2590198e8c5fd347346626686d6be8c4e8a60a8ad0d5ef5441ea461095d369
+//        testContractId:CreditManager1662461289480
+
+        //setvalue合约
+        Identity identity1=new Identity("0x3d2590198e8c5fd347346626686d6be8c4e8a60a8ad0d5ef5441ea461095d369");
+//        setInfo(identity1);
+//        //调用合约
+        info(identity);
+    }
+    public static void testUpdateContract() throws IOException {
+       // upgradeContract(contractCodeV2,newidentity);
     }
 
 
 
-    private static void upgradeContract(byte[] code) {
+    private static void upgradeContract(byte[] code,Identity myIdentity) {
 //        String newContractCode = "";
 //        byte[] code = ByteUtils.hexStringToBytes(newContractCode);
-        UpdateContractRequest request = new UpdateContractRequest(Utils.getIdentityByName(testContractId)
+        UpdateContractRequest request = new UpdateContractRequest(myIdentity
                 , code, VMTypeEnum.EVM);
         // 请参考错误信息章节，检查返回的数据
         UpdateContractResponse response = sdk.getContractService().updateContract(request);
@@ -727,6 +760,10 @@ public class DemoSample {
                     getTransactionReceipt().getResult()));
         } else {
             System.out.println("upgradeContract success.返回信息:"+response.toString());
+            // 交易hash
+            System.out.println("upgradeContract success.交易hash:"+response.getTxHash());
+            // 合约地址
+            System.out.println("upgradeContract success.合约地址:"+response.getTransactionReceipt().getResult());
         }
     }
 
